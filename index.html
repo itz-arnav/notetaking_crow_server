@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Note Taking App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: auto;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Notes</h1>
+    <ul id="notes"></ul>
+    <input type="text" id="newNote">
+    <button id="addNoteButton">Add Note</button>
+
+    <script>
+        document.getElementById('addNoteButton').addEventListener('click', function() {
+    const noteText = document.getElementById('newNote').value;
+    fetch('http://0.0.0.0:8080/notes', { 
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: `note=${noteText}`
+    })
+    .then(() => {
+        document.getElementById('newNote').value = '';
+        fetchNotes();
+    });
+});
+
+        function fetchNotes() {
+            fetch('http://0.0.0.0:8080/notes')
+                .then(response => response.json())
+                .then(data => {
+                    const notesList = document.getElementById('notes');
+                    notesList.innerHTML = '';
+                    data.forEach(note => {
+                        const li = document.createElement('li');
+                        li.textContent = note;
+                        notesList.appendChild(li);
+                    });
+                });
+        }
+
+        fetchNotes();
+    </script>
+</body>
+</html>
